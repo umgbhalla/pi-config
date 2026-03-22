@@ -40,7 +40,8 @@
         "-extensions/safe-guard.ts"
       ]
     },
-    "npm:pi-cmux"
+    "npm:pi-cmux",
+    "git:github.com/umgbhalla/pi-megaplan"
   ],
   "hideThinkingBlock": false,
   "extensions": [
@@ -55,7 +56,8 @@
     "extensions/pi-mono/files.ts",
     "extensions/pi-mono/prompt-url-widget.ts",
     "extensions/pi-mono/redraws.ts",
-    "extensions/pi-mono/tps.ts"
+    "extensions/pi-mono/tps.ts",
+    "extensions/idle-nudge/index.ts"
   ],
   "images": {
     "blockImages": false

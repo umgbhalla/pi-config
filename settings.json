@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.61.1",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4",
+  "lastChangelogVersion": "0.62.0",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-opus-4-6",
   "defaultThinkingLevel": "medium",
   "packages": [
     "git:github.com/nicobailon/pi-mcp-adapter",
@@ -36,12 +36,17 @@
       "source": "npm:oh-pi",
       "extensions": [
         "-extensions/safe-guard.ts"
+      ],
+      "prompts": [
+        "-pi-package/prompts/review.md"
       ]
     },
     "npm:pi-cmux",
     "git:github.com/picassio/pi-ghostty-web",
     "../../hub/zonko/pi-gigaplan",
-    "git:github.com/umgbhalla/pi-interactive-subagents"
+    "../../hub/pi-interactive-subagents",
+    "npm:pi-teams",
+    "npm:@codexstar/pi-listen"
   ],
   "hideThinkingBlock": false,
   "extensions": [
@@ -65,5 +70,19 @@
   "steeringMode": "all",
   "followUpMode": "all",
   "treeFilterMode": "default",
-  "theme": "catppuccin-mocha"
+  "theme": "catppuccin-mocha",
+  "voice": {
+    "version": 2,
+    "enabled": true,
+    "language": "en",
+    "scope": "global",
+    "backend": "local",
+    "localModel": "parakeet-v3",
+    "onboarding": {
+      "completed": true,
+      "schemaVersion": 2,
+      "completedAt": "2026-03-24T11:35:12.098Z",
+      "source": "migration"
+    }
+  }
 }

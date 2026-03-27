@@ -17,6 +17,12 @@ session-manager-config.toml
 # Extension dependencies (install locally)
 extensions/*/node_modules/
 
+# Runtime/local files
+pi-crash.log
+update-cache.json
+.update-check
+mcp.json
+
 # OS files
 .DS_Store
 Thumbs.db

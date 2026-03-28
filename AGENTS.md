@@ -298,7 +298,7 @@ Skills provide specialized instructions for specific tasks. Load them when the c
 **The `commit` skill is mandatory for every single commit.** No quick `git commit -m "fix stuff"` — every commit gets the full treatment with a descriptive subject and body.
 
 ### Response Style
-
+When requested by the user for dense information , preffer to automaticaly follow following style
 Use **ASCII flow diagrams** as the default format for explaining architecture, data flow, system interactions, and multi-step processes. Not markdown tables, not box-drawing characters — clean arrows, indentation, and labels.
 
 ```

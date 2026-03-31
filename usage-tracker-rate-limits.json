@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "providers": {
+    "openai": {
+      "provider": "openai",
+      "windows": [
+        {
+          "label": "Codex (5h)",
+          "percentLeft": 63,
+          "resetDescription": "in 1h41m",
+          "windowMinutes": 300
+        },
+        {
+          "label": "Codex (1w)",
+          "percentLeft": 25,
+          "resetDescription": "in 65h26m",
+          "windowMinutes": 10080
+        },
+        {
+          "label": "Code Review (1w)",
+          "percentLeft": 100,
+          "resetDescription": "in 168h",
+          "windowMinutes": 10080
+        },
+        {
+          "label": "GPT-5.3-Codex-Spark (5h)",
+          "percentLeft": 95,
+          "resetDescription": "in 2h54m",
+          "windowMinutes": 300
+        },
+        {
+          "label": "GPT-5.3-Codex-Spark (1w)",
+          "percentLeft": 72,
+          "resetDescription": "in 65h45m",
+          "windowMinutes": 10080
+        }
+      ],
+      "credits": 0,
+      "account": "umang+pro@zonko.ai",
+      "plan": "pro",
+      "note": null,
+      "probedAt": 1774961900039,
+      "error": null
+    },
+    "anthropic": {
+      "provider": "anthropic",
+      "windows": [
+        {
+          "label": "5-hour",
+          "percentLeft": 28,
+          "resetDescription": "in 1h22m",
+          "windowMinutes": 300
+        },
+        {
+          "label": "7-day",
+          "percentLeft": 55,
+          "resetDescription": "in 68h22m",
+          "windowMinutes": 10080
+        },
+        {
+          "label": "7-day Sonnet",
+          "percentLeft": 99,
+          "resetDescription": "in 138h22m",
+          "windowMinutes": 10080
+        }
+      ],
+      "credits": null,
+      "account": null,
+      "plan": "OAuth",
+      "note": "Anthropic OAuth usage endpoint is rate-limited (retry in 0s). Showing last known window values.",
+      "probedAt": 1774961962799,
+      "error": null
+    }
+  }
+}

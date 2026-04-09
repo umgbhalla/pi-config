@@ -51,10 +51,12 @@ Specialized roles with baked-in identity, workflow, and review rubrics.
 | Agent | Model | Purpose |
 |-------|-------|---------|
 | **planner** | Opus 4.6 | Interactive brainstorming — clarify, explore, validate design, write plan, create todos |
-| **scout** | Sonnet 4.6 | Fast codebase reconnaissance — gathers context without making changes |
+| **scout** | Haiku 4.5 | Fast codebase reconnaissance — gathers context without making changes |
 | **worker** | Opus 4.6 | Implements tasks from todos, commits with polished messages |
 | **reviewer** | Codex 5.3 | Reviews code for quality, security, correctness (review rubric baked in) |
-| **researcher** | Opus 4.6 | Deep research using parallel.ai tools + Claude Code for code analysis |
+| **researcher** | Opus 4.6 | Deep research using parallel.ai tools + local repo inspection |
+| **synthesizer** | Opus 4.6 | Fan-in role — merges multiple artifacts into one concise, source-grounded memo |
+| **debugger** | Codex 5.3 | Reproduces bugs, isolates root cause, applies the smallest verified fix |
 | **visual-tester** | Opus 4.6 | Visual QA — navigates web UIs via Chrome CDP, spots issues, produces reports |
 | **auditor** | Codex 5.3 | Deep codebase audit — security, architecture, dependencies, operational risk |
 | **autoresearch** | GPT-5.4 | Autonomous experiment loop — runs, measures, and optimizes iteratively |
@@ -82,11 +84,10 @@ Loaded on-demand when the context matches.
 |-----------|------------------|
 | **answer/** | `/answer` command + `Ctrl+.` — extracts questions into interactive Q&A UI |
 | **bg-sessions/** | Background session management — keep sessions running while switching |
-| **claude-tool/** | `claude` tool — invoke Claude Code for autonomous tasks |
 | **cmux/** | cmux integration — notifications, sidebar, workspace tools |
 | **cost/** | `/cost` command — API cost summary |
-| **execute-command/** | `execute_command` tool — lets the agent self-invoke slash commands |
 | **pi-mono/** | Dev tooling — diff viewer, file browser, prompt URL widget, redraws, TPS counter |
+| **reload-and-resume/** | `reload_and_resume_runtime` tool — reload pi, then automatically continue in the same session |
 | **restart/** | `/restart` command — restart the current session |
 | **todos/** | `/todos` command + `todo` tool — file-based todo management |
 | **watchdog/** | Monitors agent behavior |
@@ -96,9 +97,10 @@ Loaded on-demand when the context matches.
 | Command | Description |
 |---------|-------------|
 | `/plan <description>` | Start a planning session — spawns planner subagent, then orchestrates execution |
-| `/subagent <agent> <task>` | Spawn a subagent (e.g., `/subagent scout analyze the auth module`) |
+| `/subagent <agent> <task>` | Manual one-off subagent spawn when you explicitly want it |
 | `/iterate [task]` | Fork session into interactive subagent for quick fixes |
-| `agent_group(...)` | Launch a batch of subagents and collect one grouped result |
+| `/iterate --agent <agent> [task]` | Typed self-fork — keep current context but adopt a named agent role |
+| `agent_group(...)` | Standard orchestration primitive — launch one or many subagents and collect one grouped result |
 | `active_subagents(...)` | Inspect running subagents from the main session |
 | `message_subagent(...)` | Send a nudge/follow-up into a running subagent |
 | `/switch` | Switch sessions while optionally keeping current one running in background |
@@ -114,7 +116,7 @@ Installed via `pi install`, managed in `settings.json`.
 
 | Package | Description |
 |---------|-------------|
-| [pi-interactive-subagents](https://github.com/HazAT/pi-interactive-subagents) | Subagent tools + `/plan`, `/subagent`, `/iterate` commands |
+| [pi-interactive-subagents](https://github.com/HazAT/pi-interactive-subagents) | Subagent runtime + `agent_group(...)`, `/plan`, `/subagent`, `/iterate` |
 | [pi-parallel](https://github.com/HazAT/pi-parallel) | Parallel web search, extract, research, and enrich tools |
 | [pi-smart-sessions](https://github.com/HazAT/pi-smart-sessions) | AI-generated session names |
 | [pi-autoresearch](https://github.com/HazAT/pi-autoresearch) | Autonomous experiment loop with dashboard |

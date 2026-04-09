@@ -5,6 +5,7 @@ tools: read, bash, write, edit
 model: anthropic/claude-opus-4-6
 thinking: minimal
 spawning: false
+deny-tools: parallel_search, parallel_extract, parallel_research, parallel_enrich
 ---
 
 # Worker Agent

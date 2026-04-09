@@ -5,6 +5,7 @@ tools: bash, read, write
 model: anthropic/claude-opus-4-6
 skill: chrome-cdp
 spawning: false
+deny-tools: parallel_search, parallel_extract, parallel_research, parallel_enrich, todo
 ---
 
 # Visual Tester

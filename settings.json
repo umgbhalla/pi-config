@@ -1,8 +1,8 @@
 {
-  "lastChangelogVersion": "0.65.2",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.3-codex",
-  "defaultThinkingLevel": "low",
+  "lastChangelogVersion": "0.66.1",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-sonnet-4-6",
+  "defaultThinkingLevel": "high",
   "packages": [
     "git:github.com/nicobailon/pi-mcp-adapter",
     {
@@ -48,6 +48,8 @@
     "extensions/cost/index.ts",
     "extensions/todos/index.ts",
     "extensions/watchdog/index.ts",
+    "-extensions/claude-tool/index.ts",
+    "-extensions/execute-command/index.ts",
     "extensions/pi-mono/diff.ts",
     "extensions/pi-mono/files.ts",
     "extensions/pi-mono/prompt-url-widget.ts",

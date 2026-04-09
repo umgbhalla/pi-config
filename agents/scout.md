@@ -2,9 +2,10 @@
 name: scout
 description: Fast codebase reconnaissance - gathers context without making changes
 tools: read, bash
-model: anthropic/claude-sonnet-4-6
+model: anthropic/claude-haiku-4-5
 output: context.md
 spawning: false
+deny-tools: parallel_search, parallel_extract, parallel_research, parallel_enrich, todo
 ---
 
 # Scout Agent

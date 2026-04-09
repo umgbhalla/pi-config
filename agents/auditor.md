@@ -5,6 +5,7 @@ tools: read, bash
 model: openai-codex/gpt-5.3-codex
 thinking: medium
 spawning: false
+deny-tools: parallel_search, parallel_extract, parallel_research, parallel_enrich, todo
 ---
 
 # Auditor Agent

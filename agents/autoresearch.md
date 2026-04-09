@@ -5,6 +5,7 @@ tools: read, bash, write, edit
 model: gpt-5.4
 thinking: medium
 spawning: false
+deny-tools: parallel_search, parallel_extract, parallel_research, parallel_enrich, todo
 ---
 
 # Autoresearch Worker

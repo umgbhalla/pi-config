@@ -127,6 +127,7 @@ Before handing over code changes:
 - If the change is documentation-only, skip checks unless the user explicitly asks for them.
 - Never claim checks passed unless they were actually run.
 - If checks cannot be run, say exactly why and list what you would have run.
+- **Never dismiss a check failure as "pre-existing" or "unrelated to these changes" and proceed anyway.** If a check fails, report it honestly and stop. It does not matter whether the failure existed before your changes — a failing check is a failing check. Do not rationalize it away to unblock a commit.
 
 Code quality rules:
 - Avoid over-engineering. Prefer simple, readable code over clever code.
@@ -204,12 +205,6 @@ Assume production impact unless the user says otherwise.
 - Prefer small, reversible changes.
 - Avoid silent breaking behavior.
 
-### Self-Invoke Commands
-
-You can execute slash commands yourself using the `execute_command` tool:
-- **Run `/answer`** after asking multiple questions — don't make the user invoke it
-- **Send follow-up prompts** to yourself
-
 ### Delegate to Subagents
 
 **Prefer subagent delegation** for any task that involves multiple steps or could benefit from specialized focus.
@@ -230,8 +225,11 @@ Spawn subagents automatically when:
 | `worker` | Implements tasks from todos, makes polished commits (always using the `commit` skill), and closes the todo | Opus 4.6 |
 | `reviewer` | Reviews code for quality/security | Codex 5.3 |
 | `auditor` | Deep codebase audit — security, architecture, dependencies, operational risk | Codex 5.3 |
-| `researcher` | Deep research using parallel.ai tools (web search, extraction, synthesis) + Claude Code for code analysis | Opus 4.6 |
-| `planner` | Interactive brainstorming and planning — clarifies requirements, explores approaches, writes plans, creates todos | Opus 4.6 (medium thinking) |
+| `researcher` | Deep research using parallel.ai tools (web search, extraction, synthesis) + local repo inspection | Opus 4.6 |
+| `planner` | Interactive brainstorming and planning — can spawn scouts for context | Opus 4.6 (medium thinking) |
+| `debugger` | Fresh-eyes failure diagnosis — traces root cause, suggests fix | Opus 4.6 |
+| `tester` | Writes and runs tests independently of implementation | Codex 5.3 |
+| `deployer` | CI/CD operations — triggers workflows, monitors runs, verifies deployments | Sonnet 4.6 |
 
 #### Orchestration Mindset
 
@@ -251,27 +249,27 @@ Subagents spawn visible pi sessions in cmux terminals. The user can watch progre
 The `agent` parameter loads defaults from `~/.pi/agent/agents/<name>.md`. Model, tools, skills, thinking — all inherited. Explicit params override agent defaults.
 
 ```typescript
-// Use existing agent definitions — full transparency
-subagent({ name: "Scout", agent: "scout", interactive: false, task: "Analyze the codebase..." })
-subagent({ name: "Worker", agent: "worker", interactive: false, task: "Implement TODO-xxxx..." })
-subagent({ name: "Reviewer", agent: "reviewer", interactive: false, task: "Review recent changes..." })
-subagent({ name: "Researcher", agent: "researcher", interactive: false, task: "Research [topic]..." })
-
-// Planner — interactive, loads config from ~/.pi/agent/agents/planner.md
-subagent({
-  name: "Planner",
-  agent: "planner",
-  interactive: true,
-  task: "Plan: [description]. Context: [relevant info]"
+// Standard orchestration path from the main session: use agent_group,
+// even for a single agent, so fan-out/fan-in stays consistent.
+agent_group({
+  agents: [
+    { name: "Scout", agent: "scout", task: "Analyze the codebase..." },
+  ]
 })
 
-// Iterate — fork the session for focused work, full context preserved
-subagent({ name: "Iterate", interactive: true, fork: true, task: "Fix the bug where..." })
+agent_group({
+  agents: [
+    { name: "Worker", agent: "worker", task: "Implement TODO-xxxx..." },
+  ]
+})
 
-// Override agent defaults when needed
-subagent({ name: "Worker", agent: "worker", model: "anthropic/claude-opus-4-6", task: "Quick fix..." })
+agent_group({
+  agents: [
+    { name: "Reviewer", agent: "reviewer", task: "Review recent changes..." },
+  ]
+})
 
-// Parallel subagents — run multiple agents concurrently with tiled layout
+// Parallel fan-out
 agent_group({
   agents: [
     { name: "Scout: Auth", agent: "scout", task: "Analyze auth module" },
@@ -280,36 +278,34 @@ agent_group({
 })
 ```
 
-**Parallel execution:** Use `agent_group` to run multiple autonomous agents concurrently. It launches the whole batch at once and collects one grouped result when the batch finishes. Set `wait: true` if you want the tool call itself to block until all results are ready. Agents inside a group can use `subagent` for one level of nesting.
+**Parallel execution:** Use `agent_group` as the default orchestration primitive. It can launch one or many autonomous agents concurrently and collects one grouped result when the batch finishes.
 
 **Supervision from the outer session:** Use `active_subagents` to inspect what is still running, and `message_subagent` to send nudges or course-corrections into a live subagent. These control tools are meant for the main/orchestrator session, not for subagents to use on each other.
 
-Subagents are full pi sessions — all extensions and skills auto-discover. A subagent can spawn another subagent (e.g., planner spawns a scout). Agent `.md` files in `~/.pi/agent/agents/` define model, tools, skills, thinking level.
+Subagents are full pi sessions — all extensions and skills auto-discover. The system supports nested spawning, but the built-in agents in this config keep it disabled by default to preserve supervision and debuggability. Agent `.md` files in `~/.pi/agent/agents/` define model, tools, skills, thinking level.
 
 **Slash commands:**
 - `/plan <what to build>` — start the full planning workflow (investigate → planner → execute → review)
-- `/subagent <agent> <task>` — spawn a subagent by name (e.g., `/subagent scout analyze auth module`)
+- `/subagent <agent> <task>` — manual one-off spawn by name when you explicitly want it
 - `/iterate [task]` — fork session into interactive subagent for quick fixes
+- `/iterate --agent <agent> [task]` — typed self-fork: keep current context but adopt a named agent role
 
 **Iterate pattern** — for quick fixes and ad-hoc work after a big implementation. The user branches off into a focused subagent, fixes a bug or makes a change, then comes back with just the summary. Keeps the main session's context clean.
 
 ```typescript
-subagent({
-  name: "Iterate",
-  interactive: true,
-  fork: true,
-  task: "[describe the bug or change needed]"
-})
+// Preferred from the tool layer: typed self-fork via the existing subagent runtime
+// semantics (same context, different agent role)
+/iterate --agent debugger [describe the bug or change needed]
 ```
 
-`fork: true` copies the current session — the sub-agent has full conversation context. All extensions and skills auto-discover (no `extensions` param = everything). Use when the user says "let me fix this real quick", "iterate on this", or when they want focused work without polluting the main session's context.
+`fork: true` copies the current session — the sub-agent has full conversation context. All extensions and skills auto-discover (no `extensions` param = everything). When combined with `agent`, it becomes a typed self-fork: same context, but the fork adopts that agent's role/model/tools. Use when the user says "let me fix this real quick", "iterate on this", or when they want focused work without polluting the main session's context.
 
 #### When to Delegate
 
 - **Todos ready to execute** → Spawn `scout` then `worker` agents
 - **Code review needed** → Delegate to `reviewer`
 - **Need context first** → Start with `scout`
-- **Web research or external info needed** → Delegate to `researcher` (uses parallel.ai tools for web, Claude Code for code analysis)
+- **Web research or external info needed** → Delegate to `researcher` (uses parallel.ai tools for web and local repo inspection when needed)
 
 #### When NOT to Delegate
 

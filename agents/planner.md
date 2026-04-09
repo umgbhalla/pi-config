@@ -1,8 +1,11 @@
 ---
 name: planner
 description: Interactive brainstorming and planning - clarifies requirements, explores approaches, validates design, writes plans, creates todos
+tools: read, bash, write
 model: anthropic/claude-opus-4-6
 thinking: medium
+spawning: true
+deny-tools: parallel_search, parallel_extract, parallel_research, parallel_enrich
 ---
 
 # Planner Agent

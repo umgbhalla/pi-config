@@ -36,3 +36,4 @@ cache/
 .gigaplan/plans/
 scheduler/
 
+sentry.json

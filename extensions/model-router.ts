@@ -1,3 +1,6 @@
+import { existsSync, readFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { StringEnum } from "@mariozechner/pi-ai";
 import { Type } from "@sinclair/typebox";
@@ -101,6 +104,107 @@ function exampleSwitchParams(model: any) {
 		null,
 		2,
 	);
+}
+
+type PiSettings = {
+	enabledModels?: string[];
+};
+
+function readSettingsFile(path: string): PiSettings | undefined {
+	if (!existsSync(path)) return undefined;
+	try {
+		return JSON.parse(readFileSync(path, "utf8")) as PiSettings;
+	} catch {
+		return undefined;
+	}
+}
+
+function getEnabledModelPatterns(cwd: string): string[] | undefined {
+	const globalSettings = readSettingsFile(join(homedir(), ".pi/agent/settings.json"));
+	const projectSettings = readSettingsFile(join(cwd, ".pi/settings.json"));
+	return projectSettings?.enabledModels ?? globalSettings?.enabledModels;
+}
+
+function stripThinkingLevelSuffix(pattern: string): string {
+	const colonIndex = pattern.lastIndexOf(":");
+	if (colonIndex === -1) return pattern;
+	const suffix = pattern.slice(colonIndex + 1) as ThinkingLevel;
+	return THINKING_LEVELS.includes(suffix) ? pattern.slice(0, colonIndex) : pattern;
+}
+
+function globToRegExp(pattern: string): RegExp {
+	let regex = "^";
+	for (let i = 0; i < pattern.length; i += 1) {
+		const char = pattern[i];
+		if (char === "*") {
+			regex += ".*";
+			continue;
+		}
+		if (char === "?") {
+			regex += ".";
+			continue;
+		}
+		if (char === "[") {
+			const endIndex = pattern.indexOf("]", i + 1);
+			if (endIndex !== -1) {
+				regex += pattern.slice(i, endIndex + 1);
+				i = endIndex;
+				continue;
+			}
+		}
+		regex += char.replace(/[|\\{}()[\]^$+?.]/g, "\\$&");
+	}
+	regex += "$";
+	return new RegExp(regex, "i");
+}
+
+function selectPatternMatches(models: any[], pattern: string): any[] {
+	const normalizedPattern = stripThinkingLevelSuffix(pattern.trim());
+	if (!normalizedPattern) return [];
+
+	if (/[?*[\]]/.test(normalizedPattern)) {
+		const matcher = globToRegExp(normalizedPattern);
+		return models.filter((model) => matcher.test(`${model.provider}/${model.id}`) || matcher.test(model.id));
+	}
+
+	const normalizedReference = normalizedPattern.toLowerCase();
+	const exactFullIdMatches = models.filter(
+		(model) => `${model.provider}/${model.id}`.toLowerCase() === normalizedReference,
+	);
+	if (exactFullIdMatches.length > 0) return exactFullIdMatches;
+
+	const exactIdMatches = models.filter((model) => model.id.toLowerCase() === normalizedReference);
+	if (exactIdMatches.length > 0) return exactIdMatches;
+
+	const partialMatches = models
+		.filter(
+			(model) =>
+				model.id.toLowerCase().includes(normalizedReference) ||
+				String(model.name || "")
+					.toLowerCase()
+					.includes(normalizedReference),
+		)
+		.sort((a, b) => `${b.provider}/${b.id}`.localeCompare(`${a.provider}/${a.id}`));
+	return partialMatches.length > 0 ? [partialMatches[0]] : [];
+}
+
+function filterModelsByEnabledSettings(models: any[], cwd: string): { enabledPatterns?: string[]; models: any[] } {
+	const enabledPatterns = getEnabledModelPatterns(cwd)?.filter((pattern) => pattern.trim().length > 0);
+	if (!enabledPatterns || enabledPatterns.length === 0) {
+		return { enabledPatterns: enabledPatterns?.length ? enabledPatterns : undefined, models };
+	}
+
+	const seen = new Set<string>();
+	const filtered: any[] = [];
+	for (const pattern of enabledPatterns) {
+		for (const model of selectPatternMatches(models, pattern)) {
+			const fullId = `${model.provider}/${model.id}`;
+			if (seen.has(fullId)) continue;
+			seen.add(fullId);
+			filtered.push(model);
+		}
+	}
+	return { enabledPatterns, models: filtered };
 }
 
 function detectRoute(prompt: string): { route: RouteKey; confidence: "high" | "medium"; matched: string[] } | undefined {
@@ -379,9 +483,10 @@ export default function modelRouterExtension(pi: ExtensionAPI) {
 			const authOnly = params.authOnly ?? true;
 			const providerFilter = (params.provider || "").trim();
 			const sourceModels = authOnly ? await ctx.modelRegistry.getAvailable() : ctx.modelRegistry.getAll();
+			const scoped = filterModelsByEnabledSettings(sourceModels, ctx.cwd);
 			const filtered = providerFilter
-				? sourceModels.filter((model: any) => model.provider === providerFilter)
-				: sourceModels;
+				? scoped.models.filter((model: any) => model.provider === providerFilter)
+				: scoped.models;
 			const sorted = [...filtered].sort((a: any, b: any) => `${a.provider}/${a.id}`.localeCompare(`${b.provider}/${b.id}`));
 			const limit = params.limit ?? 100;
 			const sliced = sorted.slice(0, limit);
@@ -391,6 +496,7 @@ export default function modelRouterExtension(pi: ExtensionAPI) {
 				details: {
 					authOnly,
 					provider: providerFilter || undefined,
+					enabledModels: scoped.enabledPatterns,
 					totalMatching: filtered.length,
 					models: sliced.map((model: any) => ({
 						provider: model.provider,

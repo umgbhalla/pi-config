@@ -1,31 +1,17 @@
 {
-  "lastChangelogVersion": "0.66.1",
+  "lastChangelogVersion": "0.67.1",
   "defaultProvider": "anthropic",
-  "defaultModel": "claude-sonnet-4-6",
+  "defaultModel": "claude-opus-4-6",
   "defaultThinkingLevel": "high",
   "packages": [
     "git:github.com/nicobailon/pi-mcp-adapter",
-    {
-      "source": "git:github.com/HazAT/pi-smart-sessions",
-      "extensions": [
-        "+extensions/smart-sessions.ts"
-      ]
-    },
-    {
-      "source": "git:github.com/HazAT/pi-parallel",
-      "extensions": [
-        "+extension/index.ts"
-      ]
-    },
     "git:github.com/pasky/chrome-cdp-skill",
     "git:github.com/HazAT/glimpse",
     "git:github.com/HazAT/pi-autoresearch",
-    "npm:pi-per-model-prompt",
     "npm:@arpagon/pi-web-providers",
     "npm:@hyperprior/pi-ssh",
     "npm:pi-ghostty",
     "npm:pi-cmux",
-    "../../hub/zonko/pi-gigaplan",
     "../../hub/pi-interactive-subagents",
     "git:github.com/umgbhalla/pi-openai-compaction",
     "npm:pi-context",
@@ -35,12 +21,21 @@
     "npm:@ifi/oh-pi-skills",
     "npm:@ifi/pi-web-remote",
     "git:https://github.com/baggiiiie/pi-stuff",
-    "npm:pi-kimi-coder",
     "npm:@marckrenn/pi-sub-bar",
     "npm:@ogulcancelik/pi-session-recall",
     "npm:@sherif-fanous/pi-rtk",
     "npm:pi-repl",
-    "npm:pi-pai"
+    {
+      "source": "npm:pi-pai",
+      "extensions": [
+        "-src/extension.ts"
+      ]
+    },
+    "npm:pi-exa-search",
+    "git:github.com/umgbhalla/pi-sentry",
+    "npm:@the-forge-flow/fff-pi",
+    "npm:@heyhuynhgiabuu/pi-diff",
+    "git:github.com/supabitapp/supaterm-skills"
   ],
   "hideThinkingBlock": false,
   "extensions": [
@@ -64,10 +59,11 @@
   "showHardwareCursor": true,
   "steeringMode": "all",
   "followUpMode": "all",
-  "treeFilterMode": "default",
+  "treeFilterMode": "user-only",
   "enabledModels": [
-    "claude-opus-*",
-    "claude-sonnet-*",
+    "claude-opus-4*",
+    "claude-sonnet-4-*",
+    "claude-haiku-4-*",
     "gpt-5.3-codex",
     "gpt-5.3-codex-spark",
     "gpt-5.4",
@@ -87,5 +83,14 @@
       "completedAt": "2026-03-24T11:35:12.098Z",
       "source": "migration"
     }
-  }
+  },
+  "collapseChangelog": true,
+  "quietStartup": true,
+  "doubleEscapeAction": "tree",
+  "transport": "auto",
+  "terminal": {
+    "clearOnShrink": false
+  },
+  "autocompleteMaxVisible": 10,
+  "editorPaddingX": 4
 }

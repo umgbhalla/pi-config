@@ -28,9 +28,9 @@ export default function (pi: ExtensionAPI) {
 	const thresholds: Record<string, number> = {
 		bash: 50,
 		edit: 50,
-		read: 10,
+		read: 50,
 	};
-	const defaultThreshold = 10;
+	const defaultThreshold = 30;
 
 	return {
 		on: "tool_execution_end",

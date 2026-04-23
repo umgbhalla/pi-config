@@ -9,8 +9,9 @@ export default function (pi: ExtensionAPI) {
 	let lastUnreadFile = "";
 
 	pi.on("tool_result", async (event) => {
-		if (event.toolName === "read" && !event.isError) {
-			readFiles.add((event.input as any)?.path);
+		if ((event.toolName === "read" || event.toolName === "write") && !event.isError) {
+			const p = (event.input as any)?.path;
+			if (p) readFiles.add(p);
 		}
 		if (event.toolName === "edit" && !event.isError) {
 			const filePath = (event.input as any)?.path;

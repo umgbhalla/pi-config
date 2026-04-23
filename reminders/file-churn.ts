@@ -19,7 +19,7 @@ export default function (pi: ExtensionAPI) {
 		on: "tool_execution_end",
 		when: () => {
 			for (const [, count] of editCounts) {
-				if (count >= 5) return true;
+				if (count >= 12) return true;
 			}
 			return false;
 		},
@@ -27,6 +27,6 @@ export default function (pi: ExtensionAPI) {
 			const worst = [...editCounts.entries()].sort((a, b) => b[1] - a[1])[0];
 			return `You've edited ${worst[0]} ${worst[1]} times. Step back and consider a different approach.`;
 		},
-		cooldown: 10,
+		cooldown: 14,
 	};
 }

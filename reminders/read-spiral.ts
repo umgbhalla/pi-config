@@ -37,13 +37,13 @@ export default function (pi: ExtensionAPI) {
 
 	return {
 		on: "tool_execution_end",
-		when: () => readsSinceOutput >= 10,
+		when: () => readsSinceOutput >= 20,
 		message: () =>
 			`You have done ${readsSinceOutput} sequential reads without producing an edit, write, answer, or subagent launch. Pick ONE of these three, then act:\n\n` +
 			`  1. If the task is broad codebase exploration (learning a new repo, mapping a feature, auditing many files): stop reading serially and launch a subagent swarm. Use agent_group or branch with partitioned file sets so 3–5 subagents explore in parallel and return structured findings. Serial reads are the wrong tool for exploration at this scale.\n` +
 			`  2. If you have enough context for the change: commit to the edit/write/answer now.\n` +
 			`  3. If you genuinely need more context but the task is narrow: write a one-paragraph plan naming the exact files, functions, and next tool calls — then execute that plan.\n\n` +
 			`Do not keep reading one more file "just to be sure". If you pick option 1, give each subagent a narrow deliverable, a step/time budget, and the expected output format (per the Opus subagent_contract).`,
-		cooldown: 10,
+		cooldown: 30,
 	};
 }

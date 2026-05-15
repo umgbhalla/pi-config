@@ -1,0 +1,7 @@
+{
+  "enabled": true,
+  "summarizerModel": "anthropic/claude-opus-4-7",
+  "summarizerThinking": "high",
+  "pruneOn": "agentic-auto",
+  "remindUnprunedCount": true
+}

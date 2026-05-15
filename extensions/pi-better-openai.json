@@ -1,0 +1,27 @@
+{
+  "persistState": true,
+  "active": false,
+  "desiredActive": false,
+  "supportedModels": [
+    "openai/gpt-5.4",
+    "openai/gpt-5.5",
+    "openai-codex/gpt-5.4",
+    "openai-codex/gpt-5.5"
+  ],
+  "usage": {
+    "enabled": false,
+    "refreshIntervalMs": 60000,
+    "showOnlyOnSubscriptionModels": true,
+    "showResetTimes": true
+  },
+  "footer": {
+    "mode": "off"
+  },
+  "image": {
+    "enabled": true,
+    "defaultModel": "gpt-5.5",
+    "defaultSave": "project",
+    "outputFormat": "png",
+    "timeoutMs": 180000
+  }
+}

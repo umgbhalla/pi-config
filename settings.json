@@ -1,64 +1,44 @@
 {
-  "lastChangelogVersion": "0.70.5",
-  "defaultProvider": "anthropic",
-  "defaultModel": "claude-opus-4-7",
-  "defaultThinkingLevel": "high",
+  "lastChangelogVersion": "0.74.0",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.5",
+  "defaultThinkingLevel": "off",
   "packages": [
-    "-git:github.com/nicobailon/pi-mcp-adapter",
-    "git:github.com/pasky/chrome-cdp-skill",
     "git:github.com/HazAT/glimpse",
-    "git:github.com/HazAT/pi-autoresearch",
     "npm:@hyperprior/pi-ssh",
     "npm:pi-ghostty",
-    "npm:pi-cmux",
     "../../hub/pi-interactive-subagents",
     "git:github.com/umgbhalla/pi-openai-compaction",
-    "-npm:pi-context",
-    "npm:pi-updater",
-    "npm:@ifi/pi-spec",
     "npm:@ifi/oh-pi-themes",
-    "npm:@ifi/pi-web-remote",
-    "git:https://github.com/baggiiiie/pi-stuff",
-    "npm:@marckrenn/pi-sub-bar",
-    "-npm:@ogulcancelik/pi-session-recall",
-    "npm:@sherif-fanous/pi-rtk",
-    "-npm:pi-repl",
-    {
-      "source": "npm:pi-pai",
-      "extensions": [
-        "-src/extension.ts"
-      ]
-    },
-    "npm:pi-exa-search",
+    "-git:https://github.com/baggiiiie/pi-stuff",
+    "-npm:@sherif-fanous/pi-rtk",
     "git:github.com/umgbhalla/pi-sentry",
     "npm:@the-forge-flow/fff-pi",
-    "npm:@heyhuynhgiabuu/pi-diff",
-    "git:github.com/supabitapp/supaterm-skills",
     "../../hub/pi-per-model-prompt",
     "npm:pi-system-reminders",
     "npm:pi-parallel-web-search",
     "git:github.com/travisp/pi-async-visual-editor",
     "npm:@alexanderfortin/pi-loaded-tools",
-    "git:github.com/travisp/pi-fuck",
-    "git:github.com/jo-inc/pi-mem",
-    "npm:@robzolkos/pi-nocchio"
+    "npm:@robzolkos/pi-nocchio",
+    "git:github.com/omerxx/pi-head",
+    "npm:pi-answer",
+    "npm:pi-better-openai",
+    "git:github.com/championswimmer/pi-cache-graph",
+    "git:github.com/supabitapp/supaterm-skills",
+    "npm:pi-code-previews",
+    "npm:pi-mcp-adapter",
+    "npm:pi-codex-goal",
+    "git:github.com/picassio/pi-ghostty-web"
   ],
   "hideThinkingBlock": false,
   "extensions": [
     "extensions/restart/index.ts",
     "extensions/cost/index.ts",
-    "extensions/todos/index.ts",
-    "extensions/watchdog/index.ts",
     "extensions/slim-skills.ts",
-    "-extensions/claude-tool/index.ts",
-    "-extensions/execute-command/index.ts",
     "extensions/pi-mono/diff.ts",
     "extensions/pi-mono/files.ts",
-    "extensions/pi-mono/prompt-url-widget.ts",
     "extensions/pi-mono/redraws.ts",
-    "extensions/pi-mono/tps.ts",
-    "-extensions/session-bridge/index.ts",
-    "-extensions/dangerous-command-notify.ts"
+    "extensions/pi-mono/tps.ts"
   ],
   "images": {
     "blockImages": false
@@ -68,20 +48,6 @@
   "followUpMode": "all",
   "treeFilterMode": "all",
   "theme": "tokyo-night",
-  "voice": {
-    "version": 2,
-    "enabled": true,
-    "language": "en",
-    "scope": "global",
-    "backend": "local",
-    "localModel": "parakeet-v3",
-    "onboarding": {
-      "completed": true,
-      "schemaVersion": 2,
-      "completedAt": "2026-03-24T11:35:12.098Z",
-      "source": "migration"
-    }
-  },
   "collapseChangelog": true,
   "quietStartup": true,
   "doubleEscapeAction": "tree",
@@ -90,5 +56,8 @@
     "clearOnShrink": false
   },
   "autocompleteMaxVisible": 10,
-  "editorPaddingX": 4
+  "editorPaddingX": 1,
+  "compaction": {
+    "enabled": true
+  }
 }
